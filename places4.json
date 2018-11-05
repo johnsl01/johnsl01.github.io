@@ -2,7 +2,8 @@
 "features": 
 	[
 		{
-		"type": "Feature", 
+		"type": "Feature",
+		"name": "Los Angeles",
 		"geometry":
 			{ 
 			"type": "Point",
@@ -12,6 +13,7 @@
 		,
 		{ 
 		"type": "Feature", 
+		"name": "Washington, D.C.",
 		"geometry": 
 			{ 
 			"type": "Point", 
@@ -20,7 +22,8 @@
 		}
 		,
 		{ 
-		"type": "Feature", 
+		"type": "Feature",
+		"name": "New York",
 		"geometry": 
 			{ 
 			"type": "Point", 
@@ -30,6 +33,7 @@
 		,
 		{ 
 		"type": "Feature", 
+		"name": "Dublin",
 		"geometry": 
 			{ 
 			"type": "Point", 
