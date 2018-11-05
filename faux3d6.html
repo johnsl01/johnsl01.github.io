@@ -141,15 +141,11 @@ function ready(error, world, places) {
       .attr("class", "point")
       .attr("d", path);
   // spawn links between cities as source/target coord pairs
-  places.features.forEach(function(a) {
-    places.features.forEach(function(b) {
-      if (a !== b) {
-        links.push({
-          source: a.geometryto.coordinates,
-          target: b.geometryto.coordinates
-        });
-      }
-    });
+  places.features.forEach(function(a) {    
+    links.push({
+      source: a.geometry.coordinates,
+      target: a.geometryto.coordinates
+    });  
   });
   // build geoJSON features from links array
   links.forEach(function(e,i,a) {
