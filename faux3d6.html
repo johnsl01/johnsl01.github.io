@@ -147,6 +147,14 @@ function ready(error, world, places) {
       target: a.geometryto.coordinates
     });  
   });
+  
+  places.features.forEach(function(a) {    
+    links.push({
+      source: a.geometryto.coordinates,
+      target: a.geometry.coordinates
+    });  
+  });
+  
   // build geoJSON features from links array
   links.forEach(function(e,i,a) {
     var feature =   { "type": "Feature", "geometry": { "type": "LineString", "coordinates": [e.source,e.target] }}
