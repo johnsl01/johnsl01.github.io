@@ -7,13 +7,61 @@
 			{ 
 			"type": "Point",
 			"name": "Los Angeles",
-			"coordinates": [ -118.181926369940413, 33.991924108765431 ] 
+			"coordinates": [ -118.1819, 33.9919 ] 
 			},
 		"geometryto":
 			{ 
 			"type": "Point",
 			"name": "Washington, D.C.",
-			"coordinates": [ -77.011364439437159, 38.901495235087054 ]
+			"coordinates": [ -77.0113, 38.9015 ]
+			}			
+		}
+		,
+		{
+		"type": "Feature",		
+		"geometry":
+			{ 
+			"type": "Point",
+			"name": "Los Angeles",
+			"coordinates": [ -118.1819, 33.9919 ] 
+			},
+		"geometryto":
+			{ 
+			"type": "Point",
+			"name": "Mexico City",
+			"coordinates": [ -99.1332, 19.4326 ]
+			}			
+		}
+		,
+		{
+		"type": "Feature",		
+		"geometry":
+			{ 
+			"type": "Point",
+			"name": "Los Angeles",
+			"coordinates": [ -118.1819, 33.9919 ] 
+			},
+		"geometryto":
+			{ 
+			"type": "Point",
+			"name": "Honolulu",
+			"coordinates": [ -157.8583, 21.3069 ]
+			}			
+		}
+		,
+		{
+		"type": "Feature",		
+		"geometry":
+			{ 
+			"type": "Point",
+			"name": "Los Angeles",
+			"coordinates": [ -118.1819, 33.9919 ] 
+			},
+		"geometryto":
+			{ 
+			"type": "Point",
+			"name": "Fairbanks",
+			"coordinates": [ -147.7164, 64.8378 ]
 			}			
 		}
 		,
@@ -29,7 +77,7 @@
 			{ 
 			"type": "Point",
 			"name": "New York",
-			"coordinates": [ -73.981962787406815, 40.75192492259464 ] 
+			"coordinates": [ -73.9820, 40.7519 ] 
 			} 
 		}
 		,
@@ -78,6 +126,38 @@
 			"type": "Point",
 			"name": "Durban",
 			"coordinates": [ 31.0218, -29.8587 ] 
+			} 
+		}
+		,
+		{ 
+		"type": "Feature",
+		"geometry": 
+			{ 
+			"type": "Point", 
+			"name": "Dublin",
+			"coordinates": [ -6.26, 53.3498 ] 
+			},
+		"geometryto": 
+			{ 
+			"type": "Point",
+			"name": "Reykjavic",
+			"coordinates": [ -21.9426, 64.1466 ] 
+			} 
+		}
+		,
+		{ 
+		"type": "Feature",
+		"geometry": 
+			{ 
+			"type": "Point", 
+			"name": "Dublin",
+			"coordinates": [ -6.26, 53.3498 ] 
+			},
+		"geometryto": 
+			{ 
+			"type": "Point",
+			"name": "Stockholm",
+			"coordinates": [ -18.0686, 59.3293 ] 
 			} 
 		}
 	]
