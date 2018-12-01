@@ -17,11 +17,12 @@
     opacity: .5;
     display:none;
 }
-// adjusted to make points pink  
+// adjusted to make points pink  and larger --- but there are just the iris - the pupil is still black
 .noclicks { pointer-events:none; }
 .point {  
   opacity:.6;
   stroke: pink;
+  stroke-width:2;
 }
 .arcs {
   opacity:.8;
@@ -48,11 +49,11 @@
 <script src="https://d3js.org/topojson.v0.min.js"></script>
   
   
-V1.00.001 - 2018-12-01 12:46  
+V1.00.001 - 2018-12-01 13:06  
 <h1>GlobeTest</h1>  
 <hr>
-<p>Looking for the dots .... 1 .... L 20</p>  
-  
+<p>Looking for the dots .... 1 .... L 20</p>   
+Free text.  
 <script>
 d3.select(window)
     .on("mousemove", mousemove)
