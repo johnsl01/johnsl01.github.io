@@ -49,10 +49,10 @@
 <script src="https://d3js.org/topojson.v0.min.js"></script>
   
   
-V1.00.001 - 2018-12-01 13:39  
+V1.00.001 - 2018-12-01 13:43  
 <h1>GlobeTest</h1>  
 <hr>
-<p>Looking for the dots .... 1 .... L 20  / L 196 </p>   
+<p>Looking for the dots .... 1 .... L 20  / L 197 </p>   
 Free text. 
   
   
@@ -194,9 +194,9 @@ function ready(error, world, places) {
     arcLines.push(feature)
   })
   
- // replicate to draw in reverse (trying to get starting points - fail !)  
+ // replicate .....
   links.forEach(function(e,i,a) {
-    var feature =   { "type": "Feature", "geometry": { "type": "LineString", "coordinates": [e.target,e.source] }}
+    var feature =   { "type": "Feature", "geometryto": { "type": "LineString", "coordinates": [e.source,e.target] }}
     arcLines.push(feature)
   })
   
