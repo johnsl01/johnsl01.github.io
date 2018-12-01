@@ -49,10 +49,10 @@
 <script src="https://d3js.org/topojson.v0.min.js"></script>
   
   
-V1.00.001 - 2018-12-01 13:06  
+V1.00.001 - 2018-12-01 13:23  
 <h1>GlobeTest</h1>  
 <hr>
-<p>Looking for the dots .... 1 .... L 20</p>   
+<p>Looking for the dots .... 1 .... L 20  / L 176 </p>   
 Free text.  
 <script>
 d3.select(window)
@@ -152,6 +152,7 @@ function ready(error, world, places) {
     .enter().append("path")
       .attr("class", "point")
       .attr("d", path);
+  
   // spawn links between cities as source/target coord pairs
   places.features.forEach(function(a) {    
     links.push({
@@ -172,18 +173,28 @@ function ready(error, world, places) {
     var feature =   { "type": "Feature", "geometry": { "type": "LineString", "coordinates": [e.source,e.target] }}
     arcLines.push(feature)
   })
+  
+  links.forEach(function(e,i,a) {
+    var feature =   { "type": "Feature", "geometry": { "type": "LineString", "coordinates": [e.target,e.source] }}
+    arcLines.push(feature)
+  })
+  
   svg.append("g").attr("class","arcs")
     .selectAll("path").data(arcLines)
     .enter().append("path")
       .attr("class","arc")
       .attr("d",path)
+  
   svg.append("g").attr("class","flyers")
     .selectAll("path").data(links)
     .enter().append("path")
     .attr("class","flyer")
     .attr("d", function(d) { return swoosh(flying_arc(d)) })
+  
   refresh();
 }
+  
+  
 function flying_arc(pts) {
   var source = pts.source,
       target = pts.target;
@@ -193,20 +204,23 @@ function flying_arc(pts) {
                  proj(target) ]
   return result;
 }
-function refresh() {
-  svg.selectAll(".land").attr("d", path);
-  svg.selectAll(".point").attr("d", path);
   
+  
+function refresh() {  
+  svg.selectAll(".land").attr("d", path);  
+  svg.selectAll(".point").attr("d", path);  
   svg.selectAll(".arc").attr("d", path)
     .attr("opacity", function(d) {
         return fade_at_edge(d)
-    })
+    })  
   svg.selectAll(".flyer")
     .attr("d", function(d) { return swoosh(flying_arc(d)) })
     .attr("opacity", function(d) {
       return fade_at_edge(d)
-    }) 
+    })   
 }
+  
+  
 function fade_at_edge(d) {
   var centerPos = proj.invert([width/2,height/2]),
       arc = d3.geo.greatArc(),
@@ -228,17 +242,25 @@ function fade_at_edge(d) {
   var dist = start_dist < end_dist ? start_dist : end_dist; 
   return 1
 }
+  
+  
 function location_along_arc(start, end, loc) {
   var interpolator = d3.geo.interpolate(start,end);
   return interpolator(loc)
 }
+  
+  
 // modified from http://bl.ocks.org/1392560
 var m0, o0;
+  
+  
 function mousedown() {
   m0 = [d3.event.pageX, d3.event.pageY];
   o0 = proj.rotate();
   d3.event.preventDefault();
 }
+  
+  
 function mousemove() {
   if (m0) {
     var m1 = [d3.event.pageX, d3.event.pageY]
@@ -251,10 +273,13 @@ function mousemove() {
     refresh();
   }
 }
+  
+  
 function mouseup() {
   if (m0) {
     mousemove();
     m0 = null;
   }
 }
+  
 </script>
