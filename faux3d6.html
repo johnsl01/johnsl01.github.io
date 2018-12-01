@@ -49,7 +49,7 @@
 <script src="https://d3js.org/topojson.v0.min.js"></script>
   
   
-V1.00.001 - 2018-12-01 13:43  
+V1.00.001 - 2018-12-01 13:50  
 <h1>GlobeTest</h1>  
 <hr>
 <p>Looking for the dots .... 1 .... L 20  / L 197 </p>   
@@ -252,8 +252,11 @@ function fade_at_edge(d) {
     end = d.target;  
   }
   else {
-    start = d.geometry.coordinates[0];
-    end = d.geometry.coordinates[1];
+    // fix for errors in console
+    start = d.target,
+    end = d.source;
+    // start = d.geometry.coordinates[0];
+    // end = d.geometry.coordinates[1];
   }
   
   var start_dist = 1.57 - arc.distance({source: start, target: centerPos}),
