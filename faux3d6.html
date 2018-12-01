@@ -49,48 +49,62 @@
 <script src="https://d3js.org/topojson.v0.min.js"></script>
   
   
-V1.00.001 - 2018-12-01 13:23  
+V1.00.001 - 2018-12-01 13:39  
 <h1>GlobeTest</h1>  
 <hr>
-<p>Looking for the dots .... 1 .... L 20  / L 176 </p>   
-Free text.  
+<p>Looking for the dots .... 1 .... L 20  / L 196 </p>   
+Free text. 
+  
+  
 <script>
 d3.select(window)
     .on("mousemove", mousemove)
     .on("mouseup", mouseup);
+  
 var width = 960,
     height = 500;
+  
 var proj = d3.geo.orthographic()
     .translate([width / 2, height / 2])
     .clipAngle(90)
     .scale(220);
+  
 var sky = d3.geo.orthographic()
     .translate([width / 2, height / 2])
     .clipAngle(90)
     .scale(300);
+  
 var path = d3.geo.path().projection(proj).pointRadius(2);
+  
 var swoosh = d3.svg.line()
       .x(function(d) { return d[0] })
       .y(function(d) { return d[1] })
       .interpolate("cardinal")
       .tension(.0);
+  
 var links = [],
     arcLines = [];
+  
 var svg = d3.select("body").append("svg")
             .attr("width", width)
             .attr("height", height)
             .on("mousedown", mousedown);
+  
 queue()
     .defer(d3.json, "world-110m.json")
     .defer(d3.json, "places6.json")
     .await(ready);
+  
+  
 function ready(error, world, places) {
+  
   var ocean_fill = svg.append("defs").append("radialGradient")
         .attr("id", "ocean_fill")
         .attr("cx", "75%")
         .attr("cy", "25%");
       ocean_fill.append("stop").attr("offset", "5%").attr("stop-color", "#fff");
       ocean_fill.append("stop").attr("offset", "100%").attr("stop-color", "#ababab");
+  
   var globe_highlight = svg.append("defs").append("radialGradient")
         .attr("id", "globe_highlight")
         .attr("cx", "75%")
@@ -101,6 +115,7 @@ function ready(error, world, places) {
       globe_highlight.append("stop")
         .attr("offset", "100%").attr("stop-color", "#ba9")
         .attr("stop-opacity","0.2");
+  
   var globe_shading = svg.append("defs").append("radialGradient")
         .attr("id", "globe_shading")
         .attr("cx", "55%")
@@ -111,6 +126,7 @@ function ready(error, world, places) {
       globe_shading.append("stop")
         .attr("offset","100%").attr("stop-color", "#505962")
         .attr("stop-opacity","0.3")
+  
   var drop_shadow = svg.append("defs").append("radialGradient")
         .attr("id", "drop_shadow")
         .attr("cx", "50%")
@@ -120,13 +136,15 @@ function ready(error, world, places) {
         .attr("stop-opacity",".5")
       drop_shadow.append("stop")
         .attr("offset","100%").attr("stop-color", "#000")
-        .attr("stop-opacity","0")  
+        .attr("stop-opacity","0")
+  
   svg.append("ellipse")
     .attr("cx", 440).attr("cy", 450)
     .attr("rx", proj.scale()*.90)
     .attr("ry", proj.scale()*.25)
     .attr("class", "noclicks")
     .style("fill", "url(#drop_shadow)");
+  
   svg.append("circle")
     .attr("cx", width / 2).attr("cy", height / 2)
     .attr("r", proj.scale())
@@ -137,16 +155,19 @@ function ready(error, world, places) {
     .datum(topojson.object(world, world.objects.land))
     .attr("class", "land noclicks")
     .attr("d", path);
+  
   svg.append("circle")
     .attr("cx", width / 2).attr("cy", height / 2)
     .attr("r", proj.scale())
     .attr("class","noclicks")
     .style("fill", "url(#globe_highlight)");
+  
   svg.append("circle")
     .attr("cx", width / 2).attr("cy", height / 2)
     .attr("r", proj.scale())
     .attr("class","noclicks")
     .style("fill", "url(#globe_shading)");
+  
   svg.append("g").attr("class","points")
       .selectAll("text").data(places.features)
     .enter().append("path")
@@ -158,15 +179,14 @@ function ready(error, world, places) {
     links.push({
       source: a.geometry.coordinates,
       target: a.geometryto.coordinates
-    });  
-  });
-  
-  places.features.forEach(function(a) {    
+    }); 
     links.push({
       source: a.geometryto.coordinates,
       target: a.geometry.coordinates
-    });  
+    });    
   });
+  
+
   
   // build geoJSON features from links array
   links.forEach(function(e,i,a) {
@@ -174,6 +194,7 @@ function ready(error, world, places) {
     arcLines.push(feature)
   })
   
+ // replicate to draw in reverse (trying to get starting points - fail !)  
   links.forEach(function(e,i,a) {
     var feature =   { "type": "Feature", "geometry": { "type": "LineString", "coordinates": [e.target,e.source] }}
     arcLines.push(feature)
@@ -241,7 +262,7 @@ function fade_at_edge(d) {
   var fade = d3.scale.linear().domain([-.1,0]).range([0,.1]) 
   var dist = start_dist < end_dist ? start_dist : end_dist; 
   return 1
-}
+} 
   
   
 function location_along_arc(start, end, loc) {
