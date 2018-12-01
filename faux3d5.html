@@ -42,6 +42,7 @@
 <script src="https://d3js.org/d3.v3.min.js"></script>
 <script src="https://d3js.org/queue.v1.min.js"></script>
 <script src="https://d3js.org/topojson.v0.min.js"></script>
+<p>faux3dV5</p>  
 <script>
 d3.select(window)
     .on("mousemove", mousemove)
@@ -70,7 +71,7 @@ var svg = d3.select("body").append("svg")
             .on("mousedown", mousedown);
 queue()
     .defer(d3.json, "world-110m.json")
-    .defer(d3.json, "places6.json")
+    .defer(d3.json, "places4.json")
     .await(ready);
 function ready(error, world, places) {
   var ocean_fill = svg.append("defs").append("radialGradient")
