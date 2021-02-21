@@ -1,0 +1,206 @@
+<!-- Client Side -->
+<!DOCTYPE html>
+<html>
+<head>
+	<title>RKD</title>
+	<script src="https://unpkg.com/vue/dist/vue.js"></script>
+	<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+	<script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
+	<script src="https://d3js.org/d3-array.v2.min.js"></script>
+	<script src="https://d3js.org/d3-color.v2.min.js"></script>
+	<script src="https://d3js.org/d3-format.v2.min.js"></script>
+	<script src="https://d3js.org/d3-interpolate.v2.min.js"></script>
+	<script src="https://d3js.org/d3-time.v2.min.js"></script>
+	<script src="https://d3js.org/d3-time-format.v3.min.js"></script>
+	<script src="https://d3js.org/d3-scale.v3.min.js"></script>
+	<script type="module" src="/BarChart.js"></script>
+	<style>
+		table, th, td  {
+			border: 1px double black;
+			border-collapse: collapse;
+		}
+		th.get, td.get, td.vis  {
+			border: 0px double black;
+			border-collapse: collapse;
+			width: 250px;
+			text-align: center;
+		}
+		table.get, table.vis {
+			width: "70%";
+			border: 0px double black;
+			table-layout: fixed;
+		}
+	</style>
+</head>
+<body>
+	<div id="app">
+		<h1>Query RKD Registry</h1>
+		<div id="get_data_table">
+			<table class="get">
+				<tr>
+					<th class="get"><h3>Select Query Type</h3></th>
+					<th class="get"><h3>Select Query Parameter</h3></th>
+				</tr>
+				<tr>
+					<td class="get">
+						<div class='bootstrap_select' id="query_select">
+							<b-form-select v-model='query_type' :options='type_options' @change="chooseParams()"></b-form-select>
+						</div>
+					</td>
+					<td class="get">
+						<div class="bootstrap_select" id="param_select">
+							<b-form-select v-model='query_param' :options='param_options' @change="callQuery()"></b-form-select>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+
+		<p></p>
+		<h2>{{query_type_long}}: {{query_param_long}}</h2>
+		<div id="results">
+			<table class="vis">
+				<tr>
+					<td class="vis">test</td>
+					<td class="vis"> <bar-chart class="chart"/> </td>
+				</tr>
+			</table>
+			<b-table striped hover :items='results_table'></b-table>
+		</div>
+	</div>
+
+
+
+
+	<script type="module">
+	import BarChart from "./BarChart.js";
+	Vue.component("bar-chart", BarChart)
+	var app = new Vue({
+		name : "app",
+		el : "#app",
+		//components : { BarChart },
+		data : {
+			type_options: [
+				{value : "count", text : "Total Patient Count"},
+				{value : "ancaSpecDeath", text : "Deaths by ANCA Specificity"},
+				{value : "sexDeath", text : "Deaths by Sex"},
+				{value : "diagDeath", text : "Deaths by Main Diagnosis"},
+				{value : "ancaIFDeath", text : "Deaths by ANCA IF"}
+			],
+			param_options : [],
+			query_type : "",
+			query_type_long : "Query Results",
+			query_param : "",
+			query_param_long : "",
+			results_table: [],
+		},
+		methods: {
+			chooseParams: async function() {
+				var vm = this;
+				for (var i in vm.type_options) {
+					var op = vm.type_options[i];
+					if (op.value === vm.query_type) {
+						vm.query_type_long = op.text;
+					}
+				}
+				vm.results_table = [];
+				if (vm.query_type === "count") { vm.getCount(); }
+				else {
+					var query_type = vm.query_type.replace("Death", "");
+					var func = ("/getQueryParameters").concat("?stratify_type=" + query_type);
+					fetch(func, function(request, response){})
+					.then(async function(response) {
+						vm.param_options = await response.json();
+					})
+					.catch(function(err) {
+						console.error(err);
+						vm.results_table = [{"error": err}]; });
+				}
+			}, // end chooseQuery
+
+			callQuery: async function() {
+				for (var i in this.param_options) {
+					var op = this.param_options[i];
+					if (op.value === this.query_param) {
+						this.query_param_long = op.text;
+					}
+				}
+				if (this.query_param === "") { return; }
+				else if (this.query_type.includes("Death")) {
+					this.getDeathCountSingle();
+				}
+			}, // end callQuery
+
+			getCount: async function() {
+				var vm = this;
+				vm.param_options = [];
+				vm.query_param = "";
+				vm.query_param_long = "";
+				fetch("/getTotalCount", function(request, response){})
+				.then(async function(response){
+					var result = await response.json();
+					vm.results_table = [
+						{"parameter": vm.query_type_long, "value": result.total_count}
+					];
+				}) // end .then
+				.catch(function(err){
+					console.error(err);
+					vm.results_table = [{"error": err}];
+				}) // end .catch
+			}, // end getCount
+
+			getDeathCountSingle: async function() {
+				var vm = this;
+				var query_type = this.query_type.replace("Death", "")
+				var func = ("/getDeathCountSingle").concat("?stratify_type=", query_type, "&stratify_param=", this.query_param);
+				fetch(func, function(request, response){})
+				.then(async function(response){
+					var result = await response.json();
+					var percent_results = {
+						raw_strat_deaths : result.strat_death_count,
+						strat_death_of_all_strat : getPercent(result.strat_death_count, result.total_strat_count),
+						strat_death_of_all_death : getPercent(result.strat_death_count, result.total_death_count),
+						strat_alive_of_all_alive : getPercent(result.total_strat_count, result.total_count)
+					}
+					vm.visualiseSingleStratDeath(percent_results);
+				}) // end .then
+				.catch(function(err){
+					console.error(err);
+					vm.results_table = [{"error": err}];
+				}); // end .catch
+			}, // end getDeathCountSingle
+
+			visualiseSingleStratDeath: async function(percent_results) {
+				var vm = this;
+				// format results into table
+				if (vm.query_type === "sexDeath") {
+					vm.results_table = [
+						{"parameter": ("number of deaths of " + vm.query_param_long + " patients"), "value": percent_results.raw_strat_deaths},
+						{"parameter": ("% of " + vm.query_param_long + " patients who have died"), "value": (percent_results.strat_death_of_all_strat.toString()+"%")},
+						{"parameter": ("% of deceased patients who were " + vm.query_param_long), "value": (percent_results.strat_death_of_all_death.toString()+"%")},
+						{"parameter": ("% of living patients who were " + vm.query_param_long), "value": (percent_results.strat_alive_of_all_alive.toString()+"%")}
+					];
+					console.log(vm.results_table);
+				} else {
+					vm.results_table = [
+						{"parameter": ("number of deaths of patients with \"" + vm.query_param_long + "\""), "value": percent_results.raw_strat_deaths},
+						{"parameter": ("% of \"" + vm.query_param_long + "\" patients who have died"), "value": (percent_results.strat_death_of_all_strat.toString()+"%")},
+						{"parameter": ("% of deceased patients who had \"" + vm.query_param_long + "\""), "value": (percent_results.strat_death_of_all_death.toString()+"%")},
+						{"parameter": ("% of living patients who have \"" + vm.query_param_long + "\""), "value": (percent_results.strat_alive_of_all_alive.toString()+"%")}
+					];
+				}
+			}, // end visualiseSingleStratDeath
+		}, // end methods
+	}); // end Vue app
+
+	function getPercent(numer, denom) {
+		var percent = 0;
+		if ( denom != 0 && numer != 0 ) {
+			percent = Math.round(100*numer/denom);
+		}
+		return percent;
+	}
+
+	</script>
+</body>
+</html>
